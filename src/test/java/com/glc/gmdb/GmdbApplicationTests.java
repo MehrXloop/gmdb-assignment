@@ -44,8 +44,7 @@ public class GmdbApplicationTests {
     private MovieRepository movieRepository;
     @Mock
     private ReviewerRepository reviewerRepository;
-    // @Mock
-    // private Rev;
+    
 
     @InjectMocks
     private MovieController movieController;
