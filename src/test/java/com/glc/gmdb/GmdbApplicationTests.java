@@ -27,6 +27,7 @@ import com.glc.gmdb.model.Movie;
 import com.glc.gmdb.model.Review;
 import com.glc.gmdb.model.Reviewer;
 import com.glc.gmdb.repositories.MovieRepository;
+import com.glc.gmdb.repositories.ReviewRepository;
 import com.glc.gmdb.repositories.ReviewerRepository;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -44,7 +45,8 @@ public class GmdbApplicationTests {
     private MovieRepository movieRepository;
     @Mock
     private ReviewerRepository reviewerRepository;
-    
+    @Mock
+    private ReviewRepository reviewRepository;
 
     @InjectMocks
     private MovieController movieController;
@@ -97,9 +99,9 @@ public class GmdbApplicationTests {
     // Text | DateTime last modified
     // so that I can read the reviews for a movie.
     @Test
-    public void canGetMovieWithReviews() throws Exception{
+    public void canGetMovieWithReviews() throws Exception {
         Movie movie = new Movie(1, "movie 1", 2002, "action", 120);
-        Reviewer reviewer = new Reviewer(1, "mehr",Date.valueOf(LocalDate.now()) , 3);
+        Reviewer reviewer = new Reviewer(1, "mehr", Date.valueOf(LocalDate.now()), 3);
         Review review1 = new Review(1, "shfdlsdjf", Date.valueOf(LocalDate.now()), movie, reviewer);
         Review review2 = new Review(2, "shfdlsdjffsdfs", Date.valueOf(LocalDate.now()), movie, reviewer);
 
@@ -110,9 +112,9 @@ public class GmdbApplicationTests {
         movie.setReviews(reviews);
         when(movieRepository.findById(1)).thenReturn(Optional.of(movie));
         mvc.perform(get("/movies/1")
-        .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(content().json(jsonMovie.write(movie).getJson()));
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(jsonMovie.write(movie).getJson()));
 
     }
 
@@ -138,12 +140,12 @@ public class GmdbApplicationTests {
     // So that I can start reviewing movies.
 
     @Test
-    public void canAddAReviewer() throws Exception{
+    public void canAddAReviewer() throws Exception {
         Reviewer reviewer = new Reviewer("mehr");
         mvc2.perform(post("/reviewers")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(jsonReviewer.write(reviewer).getJson()))
-        .andExpect(status().isOk());
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonReviewer.write(reviewer).getJson()))
+                .andExpect(status().isOk());
     }
 
     //
@@ -155,7 +157,12 @@ public class GmdbApplicationTests {
     // 6. As a reviewer
     // I can delete a review by providing my reviewer ID and a review ID
     // So that I can remove reviews I no longer wish to share.
-
+   @Test
+    public void canDeleteAReview() throws Exception{
+    mvc2.perform(delete("/reviewers/1/1"))
+        .andExpect(status().isOk());
+    
+   }
 
     //
     // 7. As a reviewer
